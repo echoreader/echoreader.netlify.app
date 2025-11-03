@@ -1,13 +1,13 @@
+import Layout from '../components/Layout';
 import '../styles/globals.css';
-import 'prismjs/themes/prism-tomorrow.css';
 
-function MyApp({ Component, pageProps }) {
+export default function App({ Component, pageProps }) {
+
+  const meta = Component.meta || {};
+
   return (
-    <>
-      {/* <span className="theme-bejamas" /> */}
+    <Layout globalData={pageProps.globalData} meta={meta}>
       <Component {...pageProps} />
-    </>
+    </Layout>
   );
 }
-
-export default MyApp;

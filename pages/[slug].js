@@ -7,91 +7,70 @@ import {
 import { MDXRemote } from 'next-mdx-remote';
 import Head from 'next/head';
 import CustomImage from '../components/CustomImage';
-import CustomLink from '../components/CustomLink';
-import Footer from '../components/Footer';
-import Header from '../components/Header';
-import Layout from '../components/Layout';
-import SEO from '../components/SEO';
-import Schema from '../components/Schema';
-import { siteUrl } from "../utils/config-utils"; // ← ambil siteUrl
+import Link from '../components/Link';
+import CustomHead from '../components/Head';
+import { siteUrl } from "../utils/site"; // ← ambil siteUrl
 
 const components = {
-  a: CustomLink,
+  //a: CustomLink,
   Head,
   img: CustomImage,
+  a: Link, // override default <a>
+  Link,    // custom usage
 };
 
 export default function PostPage({
   source,
   frontMatter,
-  globalData,
   slug,
 }) {
   return (
-    <Layout>
-      <SEO
-        title={`${frontMatter.title} - ${globalData.name}`}
+    <>
+      <CustomHead
+        title={`${frontMatter.title} | Craftflavor`}
         description={frontMatter.description}
       />
 
-      <Schema
-        type="blogpost"
-        data={{
-          title: frontMatter.title,
-          description: frontMatter.description,
-          date: frontMatter.date,
-          url: `${siteUrl}/${slug}`
-        }}
-      />
-
-      {/* === HEADER === */}
-      <Header name={globalData.name} />
-
       {/* === MAIN CONTENT === */}
-      <main className="w-full max-w-2xl mx-auto px-4 pt-10 pb-20">
-        <article data-sb-object-id={`posts/${slug}.mdx`}>
-          <section
-            className="prose dark:prose-invert prose-headings:text-left"
-            data-sb-field-path="markdown_content"
-          >
-            <h1 className="mb-6 text-3xl md:text-5xl dark:text-white" data-sb-field-path="title">
-               <a
-                href={`${siteUrl}/${slug}/`}
-                aria-label={`Permalink to: ${frontMatter.title}`}
-                className="text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400"
-              >
-              {frontMatter.title}</a>
-            </h1>
+      <article data-sb-object-id={`posts/${slug}.mdx`}>
+        <section
+          className="prose dark:prose-invert prose-headings:text-left"
+          data-sb-field-path="markdown_content"
+        >
+          <h1 className="mb-6 text-3xl md:text-5xl dark:text-white" data-sb-field-path="title">
+              <a
+              href={`${siteUrl}/${slug}/`}
+              aria-label={`Permalink to: ${frontMatter.title}`}
+              className="text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+            {frontMatter.title}</a>
+          </h1>
 
-            {frontMatter.date && (
-              <p className="mb-4 text-sm text-gray-500 dark:text-gray-400" data-sb-field-path="date">
-                {new Date(frontMatter.date).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric"
-                })}
-              </p>
-            )}
-            
-            {frontMatter.description && (
-              <p className="mb-8 text-lg text-gray-600 dark:text-gray-300" data-sb-field-path="description">
-                {frontMatter.description}
-              </p>
-            )}
+          {frontMatter.date && (
+            <p className="mb-4 text-sm text-gray-500 dark:text-gray-400" data-sb-field-path="date">
+              {new Date(frontMatter.date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+              })}
+            </p>
+          )}
+          
+          {frontMatter.description && (
+            <p className="mb-8 text-lg text-gray-600 dark:text-gray-300" data-sb-field-path="description">
+              {frontMatter.description}
+            </p>
+          )}
 
-            <MDXRemote {...source} components={components} scope={{ siteUrl }} />
-          </section>
+          <MDXRemote {...source} components={components} scope={{ siteUrl }} />
+        </section>
 
-          {/* === PREV / NEXT NAVIGATION === */}
-          {/* <div className="grid mt-12 md:grid-cols-2 gap-4">
-            ...prev/next links... 
-          </div>*/}
-        </article>
-      </main>
-
-      {/* === FOOTER === */}
-      <Footer copyrightText={globalData.footerText} />
-    </Layout>
+        {/* === PREV / NEXT NAVIGATION === */}
+        {/* <div className="grid mt-12 md:grid-cols-2 gap-4">
+          ...prev/next links... 
+        </div>*/}
+      </article>
+    </>
   );
 }
 
