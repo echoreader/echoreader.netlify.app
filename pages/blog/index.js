@@ -7,40 +7,36 @@ import { siteUrl } from "../../utils/config-utils";
 export default function BlogPage({ posts, globalData }) {
   return (
     <>
-      <h1 className="text-3xl font-bold text-center mb-10 lg:text-5xl">All Posts</h1>
-      <ul className="grid gap-8">
+      <h1 className="text-2xl font-bold text-left mb-6 lg:text-5xl">All Posts</h1>
+      <div className="grid gap-3">
         {posts.map((post) => {
           const slug = post.filePath.replace(/\.mdx?$/, '');
           const postUrl = `${siteUrl}/${slug}/`;
           return (
-            <li key={slug} className="border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition px-6 py-6">
-              {/* Tanggal di luar anchor */}
-              <p className="mb-2 text-xs font-semibold uppercase text-gray-500" aria-hidden="true">
-                {post.data.date || 'Date not available'}
-              </p>
-
-              {/* Judul sebagai anchor */}
-              <h2 className="text-xl font-bold text-gray-900 mb-2">
+            <div key={slug} className="border border-solid border-gray-400 rounded-lg p-6 shadow-sm space-y-4">
+              <h2 className="text-4xl font-semibold text-gray-900 mb-3">
                 <a
                   href={postUrl}
                   aria-label={`Read Article: ${post.data.title}`}
-                  className="text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="text-blue-700 no-underline focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
                   {post.data.title}
                 </a>
               </h2>
 
-              {/* Deskripsi di luar anchor */}
-              {post.data.description && (
-                <p className="text-gray-600 text-sm">{post.data.description}</p>
-              )}
+              <p className="mb-3 text-sm font-medium text-gray-600">
+                {post.data.date || 'Date not available'}
+              </p>
 
-              {/* Icon tetap di luar anchor */}
-              <ArrowIcon className="mt-4 text-blue-500" />
-            </li>
+              {post.data.description && (
+                <p className="text-base text-gray-700 leading-relaxed">
+                  {post.data.description}
+                </p>
+              )}
+            </div>
           );
         })}
-      </ul>
+      </div>
     </>
   );
 }

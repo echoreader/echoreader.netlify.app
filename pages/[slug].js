@@ -34,7 +34,7 @@ export default function PostPage({
       {/* === MAIN CONTENT === */}
       <article data-sb-object-id={`posts/${slug}.mdx`}>
         <section
-          className="prose dark:prose-invert prose-headings:text-left"
+          className="prose dark:prose-invert prose-headings:text-left max-w-4xl mx-auto px-4"
           data-sb-field-path="markdown_content"
         >
           <h1 className="mb-6 text-3xl md:text-5xl dark:text-white" data-sb-field-path="title">

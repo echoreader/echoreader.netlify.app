@@ -1,7 +1,7 @@
 export default function Index() {
   return (
     <>
-      <h1 className="text-3xl font-bold text-center mb-8 lg:text-5xl">
+      <h1 className="text-3xl font-bold text-center mb-8 lg:text-5xl leading-tight min-h-[80px]">  
         Craft with Flavor — Handmade Joy Meets Kitchen Creativity
       </h1>
       <section className="space-y-4 text-base leading-relaxed">

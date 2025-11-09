@@ -2,18 +2,20 @@ import CustomHead from './Head';
 import Header from './Header';
 import Footer from './Footer';
 
-export default function Layout({ children, globalData, meta }) {
+export default function Layout({ children, globalData, meta, className  }) {
   return (
     <>
-      <CustomHead 
-        title={meta?.title}
-        description={meta?.description}
-      />
-      <Header name={globalData?.name} />
-      <main className="w-full max-w-3xl mx-auto px-4 py-10 text-gray-800 bg-white">
-        {children}
-      </main>
-      <Footer copyrightText={globalData?.footerText} />
+      <div className={className}>
+        <CustomHead 
+          title={meta?.title}
+          description={meta?.description}
+        />
+        <Header name={globalData?.name} />
+        <main className="flex-grow pt-16 px-4 max-w-4xl mx-auto">
+          {children}
+        </main>
+        <Footer copyrightText={globalData?.footerText} />
+      </div>
     </>
   );
 }

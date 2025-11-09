@@ -6,46 +6,62 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
-      <div className="max-w-6xl mx-auto px-6 py-4">
-        {/* Line Up: Echo Reader + ☰ */}
-        <div className="flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full bg-white border-b border-solid border-gray-300 h-16">
+        <div className="max-w-4xl mx-auto px-4 flex h-full items-center justify-between">
+          {/* Brand kiri tanpa underline */}
           <a
             href={`${siteUrl}`}
-            className="text-2xl font-semibold text-gray-900 hover:text-blue-600 transition"
+            className="text-2xl font-semibold text-gray-900 no-underline"
           >
             Craftflavor
           </a>
 
-          {/* ☰ Only Show at Mobile */}
+          {/* ☰ Mobile toggle */}
           <button
             className="flex flex-col justify-center gap-1 sm:hidden"
             aria-label="Toggle menu"
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen(!menuOpen)}
           >
-            {/*<span className="w-6 h-0.5 bg-gray-800"></span>*/}
             <span className="w-6 h-0.5 bg-gray-800"></span>
             <span className="w-6 h-0.5 bg-gray-800"></span>
           </button>
 
           {/* Menu desktop */}
           <nav className="hidden sm:flex gap-6 text-sm font-medium text-gray-700 tracking-wide">
-            {/*<Link href="/" className="px-3 py-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition">Home</Link>*/}
-            <a href={`${siteUrl}/blog/`} className="px-3 py-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition">Blog</a>
-            <a href={`${siteUrl}/about/`} className="px-3 py-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition">About</a>
+            <a
+              href={`${siteUrl}/blog/`}
+              className="no-underline hover:text-blue-600 transition"
+            >
+              Blog
+            </a>
+            <a
+              href={`${siteUrl}/about/`}
+              className="no-underline hover:text-blue-600 transition"
+            >
+              About
+            </a>
           </nav>
         </div>
 
         {/* Menu mobile */}
         {menuOpen && (
           <nav className="flex flex-col gap-4 mt-4 text-sm font-medium text-gray-700 tracking-wide sm:hidden">
-            {/*<Link href="/" className="px-3 py-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition">Home</Link>*/}
-            <a href={`${siteUrl}/blog`} className="px-3 py-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition">Blog</a>
-            <a href={`${siteUrl}/about`} className="px-3 py-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition">About</a>
+            <a
+              href={`${siteUrl}/blog`}
+              className="no-underline hover:text-blue-600 transition"
+            >
+              Blog
+            </a>
+            <a
+              href={`${siteUrl}/about`}
+              className="no-underline hover:text-blue-600 transition"
+            >
+              About
+            </a>
           </nav>
         )}
-      </div>
+      
     </header>
   );
 }
