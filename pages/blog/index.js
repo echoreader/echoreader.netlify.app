@@ -1,10 +1,10 @@
 import Link from 'next/link';
+import Pagination from '../../components/Pagination';
 import { getAllPosts } from '../../utils/mdx-utils';
 import { getGlobalData } from '../../utils/global-data';
-import ArrowIcon from '../../components/ArrowIcon';
 import { siteUrl } from "../../utils/config-utils";
 
-export default function BlogPage({ posts, globalData }) {
+export default function BlogPage({ posts, globalData, totalPages }) {
   return (
     <>
       <h1 className="text-2xl font-bold text-left mb-6 lg:text-5xl">All Posts</h1>
@@ -37,6 +37,9 @@ export default function BlogPage({ posts, globalData }) {
           );
         })}
       </div>
+
+      {/* Pagination untuk halaman pertama */}
+      <Pagination currentPage={1} totalPages={totalPages} />
     </>
   );
 }
@@ -44,8 +47,17 @@ export default function BlogPage({ posts, globalData }) {
 export async function getStaticProps() {
   const posts = getAllPosts();
   const globalData = await getGlobalData();
+
+  const perPage = 10; // jumlah artikel per halaman
+  const paginated = posts.slice(0, perPage); // ambil artikel untuk page 1
+  const totalPages = Math.ceil(posts.length / perPage);
+
   return {
-    props: { posts, globalData },
+    props: {
+      posts: paginated,       // ← kirim hasil slice, bukan semua
+      globalData,
+      totalPages,             // ← kirim total halaman ke komponen
+    },
   };
 }
 

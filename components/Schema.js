@@ -13,39 +13,55 @@ export default function Schema({ type, data = {} }) {
         "https://twitter.com/echoreader"
       ]
     },
-    bloglist: {
+    article: {
       "@context": "https://schema.org",
-      "@type": "CollectionPage",
-      "name": "Echo Reader Blog",
-      "url": `https://craftflavor.blog/blog/page/${data.currentPage || 1}`,
-      "description": "Browse curated articles from Echo Reader on people, relationships, and society.",
-      "hasPart": Array.isArray(data.posts)
-        ? data.posts.map((post) => ({
-            "@type": "BlogPosting",
-            "headline": post.data.title || "Untitled",
-            "datePublished": post.data.date || "2025-01-01",
-            "url": `https://craftflavor.blog/${post.filePath.replace(/\.mdx?$/, '')}`
-          }))
-        : [],
-      "publisher": {
-        "@type": "Organization",
-        "name": "Echo Reader"
-      }
-    },
-    blogpost: {
-      "@context": "https://schema.org",
-      "@type": "BlogPosting",
+      "@type": "Article",
       "headline": data.title || "Untitled Post",
       "description": data.description || "No description available",
       "datePublished": data.date || "2025-01-01",
+      "dateModified": data.modified || data.date || "2025-01-01",
       "author": {
         "@type": "Person",
-        "name": "Echo"
+        "name": data.author || "Echo Reader"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Echo Reader",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://craftflavor.blog/logo.png"
+        }
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": data.url || "https://craftflavor.blog/blog"
-      }
+      },
+      "keywords": Array.isArray(data.tags) ? data.tags.join(", ") : undefined,
+      "articleSection": data.category || undefined
+    },
+    breadcrumb: {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://craftflavor.blog/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": data.category || "Blog",
+          "item": "https://craftflavor.blog/blog"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": data.title || "Untitled Post",
+          "item": data.url || "https://craftflavor.blog/blog"
+        }
+      ]
     },
     profile: {
       "@context": "https://schema.org",

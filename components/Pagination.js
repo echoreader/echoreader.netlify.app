@@ -1,39 +1,40 @@
 import Link from 'next/link';
 
-export default function Pagination({ currentPage, totalPages }) {
+export default function Pagination({ currentPage, totalPages, basePath = '/blog/page' }) {
   const prevPage = currentPage > 1 ? currentPage - 1 : null;
   const nextPage = currentPage < totalPages ? currentPage + 1 : null;
 
   return (
-    <nav className="flex justify-center items-center gap-4 mt-10 text-sm">
-      {/* Prev Button */}
-      {prevPage ? (
-        <Link
-          href={`/blog/page/${prevPage}`}
-          className="px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700 transition"
-        >
-          ← Prev
-        </Link>
-      ) : (
-        <span className="px-4 py-2 text-gray-400 cursor-not-allowed">← Prev</span>
-      )}
+    <nav className="flex justify-between items-center mt-10 px-4 py-2 border-t border-gray-300 text-sm">
+      <div>
+        {prevPage ? (
+          <Link
+            href={prevPage === 1 ? '/blog' : `${basePath}/${prevPage}`}
+            className="text-blue-600 hover:underline"
+          >
+            ← Prev
+          </Link>
+        ) : (
+          <span className="text-gray-400 cursor-not-allowed">← Prev</span>
+        )}
+      </div>
 
-      {/* Page Info */}
-      <span className="px-4 py-2 text-gray-600">
+      <div className="text-gray-600">
         Page {currentPage} of {totalPages}
-      </span>
+      </div>
 
-      {/* Next Button */}
-      {nextPage ? (
-        <Link
-          href={`/blog/page/${nextPage}`}
-          className="px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700 transition"
-        >
-          Next →
-        </Link>
-      ) : (
-        <span className="px-4 py-2 text-gray-400 cursor-not-allowed">Next →</span>
-      )}
+      <div>
+        {nextPage ? (
+          <Link
+            href={`${basePath}/${nextPage}`}
+            className="text-blue-600 hover:underline"
+          >
+            Next →
+          </Link>
+        ) : (
+          <span className="text-gray-400 cursor-not-allowed">Next →</span>
+        )}
+      </div>
     </nav>
   );
 }

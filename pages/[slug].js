@@ -2,6 +2,7 @@ import { getGlobalData } from '../utils/global-data';
 import {
   getPostBySlug,
   getPostFilePaths,
+  getAllPosts
 } from '../utils/mdx-utils';
 
 import { MDXRemote } from 'next-mdx-remote';
@@ -9,20 +10,22 @@ import Head from 'next/head';
 import CustomImage from '../components/CustomImage';
 import Link from '../components/Link';
 import CustomHead from '../components/Head';
-import { siteUrl } from "../utils/site"; // ← ambil siteUrl
+import { siteUrl } from "../utils/site";
+import Schema from '../components/Schema'; // ← tambahkan import
 
 const components = {
-  //a: CustomLink,
   Head,
   img: CustomImage,
-  a: Link, // override default <a>
-  Link,    // custom usage
+  a: Link,
+  Link,
 };
 
 export default function PostPage({
   source,
   frontMatter,
   slug,
+  prevPost,
+  nextPost,
 }) {
   return (
     <>
@@ -31,6 +34,38 @@ export default function PostPage({
         description={frontMatter.description}
       />
 
+      {/* === SCHEMA === */}
+      <Schema type="article" data={{
+        title: frontMatter.title,
+        description: frontMatter.description,
+        date: frontMatter.date,
+        author: frontMatter.author,
+        tags: frontMatter.tags,
+        category: frontMatter.category,
+        url: `${siteUrl}/${slug}/`
+      }} />
+
+      <Schema type="breadcrumb" data={{
+        title: frontMatter.title,
+        category: frontMatter.category,
+        url: `${siteUrl}/${slug}/`
+      }} />
+
+      {/* === BREADCRUMB === */}
+      <nav className="text-sm text-gray-600 mb-4 px-4">
+        <Link href="/" className="hover:underline">Home</Link>
+        {frontMatter.category ? (
+          <>
+            &nbsp;&gt;&nbsp;<span className="text-gray-800">{frontMatter.category}</span>
+            &nbsp;&gt;&nbsp;<span className="text-gray-800 font-semibold">{frontMatter.title}</span>
+          </>
+        ) : (
+          <>
+            &nbsp;&gt;&nbsp;<span className="text-gray-800 font-semibold">{frontMatter.title}</span>
+          </>
+        )}
+      </nav>
+
       {/* === MAIN CONTENT === */}
       <article data-sb-object-id={`posts/${slug}.mdx`}>
         <section
@@ -38,12 +73,13 @@ export default function PostPage({
           data-sb-field-path="markdown_content"
         >
           <h1 className="mb-6 text-3xl md:text-5xl dark:text-white" data-sb-field-path="title">
-              <a
+            <a
               href={`${siteUrl}/${slug}/`}
               aria-label={`Permalink to: ${frontMatter.title}`}
               className="text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400"
             >
-            {frontMatter.title}</a>
+              {frontMatter.title}
+            </a>
           </h1>
 
           {frontMatter.date && (
@@ -55,20 +91,67 @@ export default function PostPage({
               })}
             </p>
           )}
-          
+
           {frontMatter.description && (
             <p className="mb-8 text-lg text-gray-600 dark:text-gray-300" data-sb-field-path="description">
               {frontMatter.description}
             </p>
           )}
 
+          {/* === AUTHOR === */}
+          <p className="text-sm text-gray-700 px-4">
+            • Author: <span>{frontMatter.author || 'Echo Reader'}</span>
+          </p>
+
           <MDXRemote {...source} components={components} scope={{ siteUrl }} />
         </section>
 
-        {/* === PREV / NEXT NAVIGATION === */}
-        {/* <div className="grid mt-12 md:grid-cols-2 gap-4">
-          ...prev/next links... 
-        </div>*/}
+        {/* === TAGS === */}
+{frontMatter.tags && frontMatter.tags.length > 0 && (
+  <div className="mt-8 text-sm text-gray-600 px-4">
+    <strong className="block mb-2">Tags:</strong>
+    <div className="flex flex-wrap gap-2">
+      {frontMatter.tags.map((tag) => (
+        <span
+          key={tag}
+          className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-xs font-medium hover:bg-gray-200 transition"
+        >
+          {tag}
+        </span>
+      ))}
+    </div>
+  </div>
+)}
+
+
+
+        {/* === PREV / NEXT === */}
+<div className="flex justify-between mt-12 px-4 text-sm text-blue-600">
+  {prevPost ? (
+    <Link
+      href={`/${prevPost.filePath.replace(/\.mdx?$/, '')}/`}
+      className="hover:underline flex items-center gap-1"
+    >
+      <span aria-hidden="true">&laquo;</span>
+      <span>{prevPost.data.title}</span>
+    </Link>
+  ) : (
+    <span />
+  )}
+
+  {nextPost ? (
+    <Link
+      href={`/${nextPost.filePath.replace(/\.mdx?$/, '')}/`}
+      className="hover:underline flex items-center gap-1"
+    >
+      <span>{nextPost.data.title}</span>
+      <span aria-hidden="true">&raquo;</span>
+    </Link>
+  ) : (
+    <span />
+  )}
+</div>
+
       </article>
     </>
   );
@@ -77,6 +160,14 @@ export default function PostPage({
 export const getStaticProps = async ({ params }) => {
   const globalData = getGlobalData();
   const { mdxSource, data } = await getPostBySlug(params.slug);
+  const allPosts = getAllPosts();
+
+  const slugs = allPosts.map(post => post.filePath.replace(/\.mdx?$/, ''));
+  const index = slugs.indexOf(params.slug);
+
+  // Guard kalau slug tidak ketemu (misal mismatch nama file)
+  const prevPost = index > 0 ? allPosts[index - 1] : null;
+  const nextPost = (index !== -1 && index < slugs.length - 1) ? allPosts[index + 1] : null;
 
   return {
     props: {
@@ -84,13 +175,15 @@ export const getStaticProps = async ({ params }) => {
       source: mdxSource,
       frontMatter: data,
       slug: params.slug,
+      prevPost,
+      nextPost,
     },
   };
 };
 
 export const getStaticPaths = async () => {
   const paths = getPostFilePaths()
-    .map((path) => path.replace(/\.mdx?$/, ''))
+    .map((p) => p.replace(/\.mdx?$/, ''))
     .map((slug) => ({ params: { slug } }));
 
   return {
