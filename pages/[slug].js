@@ -107,51 +107,52 @@ export default function PostPage({
         </section>
 
         {/* === TAGS === */}
-{frontMatter.tags && frontMatter.tags.length > 0 && (
-  <div className="mt-8 text-sm text-gray-600 px-4">
-    <strong className="block mb-2">Tags:</strong>
-    <div className="flex flex-wrap gap-2">
-      {frontMatter.tags.map((tag) => (
-        <span
-          key={tag}
-          className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-xs font-medium hover:bg-gray-200 transition"
-        >
-          {tag}
-        </span>
-      ))}
-    </div>
-  </div>
-)}
-
-
+        {frontMatter.tags && frontMatter.tags.length > 0 && (
+          <div className="mt-8 text-sm text-gray-600 px-4">
+            <strong className="block mb-2">Tags:</strong>
+            <div className="flex flex-wrap gap-2">
+              {frontMatter.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-xs font-medium hover:bg-gray-200 transition"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* === PREV / NEXT === */}
-<div className="flex justify-between mt-12 px-4 text-sm text-blue-600">
-  {prevPost ? (
-    <Link
-      href={`/${prevPost.filePath.replace(/\.mdx?$/, '')}/`}
-      className="hover:underline flex items-center gap-1"
-    >
-      <span aria-hidden="true">&laquo;</span>
-      <span>{prevPost.data.title}</span>
-    </Link>
-  ) : (
-    <span />
-  )}
+        <div className="flex justify-between mt-12 px-4 text-sm text-blue-600">
+          {prevPost ? (
+            <div className="flex items-center gap-1">
+              <span aria-hidden="true">&laquo;</span>
+              <Link
+                href={`/${prevPost.filePath.replace(/\.mdx?$/, '')}/`}
+                className="hover:underline"
+              >
+                {prevPost.data.title}
+              </Link>
+            </div>
+          ) : (
+            <span />
+          )}
 
-  {nextPost ? (
-    <Link
-      href={`/${nextPost.filePath.replace(/\.mdx?$/, '')}/`}
-      className="hover:underline flex items-center gap-1"
-    >
-      <span>{nextPost.data.title}</span>
-      <span aria-hidden="true">&raquo;</span>
-    </Link>
-  ) : (
-    <span />
-  )}
-</div>
-
+          {nextPost ? (
+            <div className="flex items-center gap-1">
+              <Link
+                href={`/${nextPost.filePath.replace(/\.mdx?$/, '')}/`}
+                className="hover:underline"
+              >
+                {nextPost.data.title}
+              </Link>
+              <span aria-hidden="true">&raquo;</span>
+            </div>
+          ) : (
+            <span />
+          )}
+        </div>
       </article>
     </>
   );
