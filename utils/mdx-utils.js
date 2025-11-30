@@ -40,7 +40,6 @@ export const getAllPosts = () => {
   return sortPostsByDate(posts);
 };
 
-
 export const getPostBySlug = async (slug) => {
   const postFilePath = path.join(POSTS_PATH, `${slug}.mdx`);
   const source = fs.readFileSync(postFilePath);
@@ -58,12 +57,12 @@ export const getPostBySlug = async (slug) => {
       remarkPlugins: [remarkGfm],
       rehypePlugins: [rehypePrism, rehypeUnwrapImages],
     },
-    scope: { ...data, tags }, // kirim tags yang sudah array
+    scope: { ...data, tags },
   });
 
-  return { mdxSource, data: { ...data, tags }, postFilePath };
+  return { mdxSource, data: { ...data, tags }, content,
+  postFilePath };
 };
-
 
 export const getAllSlugs = () => {
   return getPostFilePaths().map((filePath) =>

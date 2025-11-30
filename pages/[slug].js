@@ -11,7 +11,8 @@ import CustomImage from '../components/CustomImage';
 import Link from '../components/Link';
 import CustomHead from '../components/Head';
 import { siteUrl } from "../utils/site";
-import Schema from '../components/Schema'; // ← tambahkan import
+import Schema from '../components/Schema';
+import SchemaFaq from '../components/SchemaFaq';
 
 const components = {
   Head,
@@ -34,12 +35,11 @@ export default function PostPage({
         description={frontMatter.description}
       />
 
-      {/* === SCHEMA === */}
       <Schema type="article" data={{
         title: frontMatter.title,
         description: frontMatter.description,
         date: frontMatter.date,
-        author: frontMatter.author,
+        author: frontMatter.author || 'Echo Reader',
         tags: frontMatter.tags,
         category: frontMatter.category,
         url: `${siteUrl}/${slug}/`
@@ -51,22 +51,25 @@ export default function PostPage({
         url: `${siteUrl}/${slug}/`
       }} />
 
-      {/* === BREADCRUMB === */}
-      <nav className="text-sm text-gray-600 mb-4 px-4">
+      <SchemaFaq faqs={frontMatter.faqs} />
+
+      <nav className="text-sm text-gray-600 mb-4 px-4" aria-label="Breadcrumb">
         <Link href="/" className="hover:underline">Home</Link>
         {frontMatter.category ? (
           <>
-            &nbsp;&gt;&nbsp;<span className="text-gray-800">{frontMatter.category}</span>
-            &nbsp;&gt;&nbsp;<span className="text-gray-800 font-semibold">{frontMatter.title}</span>
+            <span aria-hidden="true"> &gt; </span>
+            <span className="text-gray-800">{frontMatter.category}</span>
+            <span aria-hidden="true"> &gt; </span>
+            <span className="text-gray-800 font-semibold">{frontMatter.title}</span>
           </>
         ) : (
           <>
-            &nbsp;&gt;&nbsp;<span className="text-gray-800 font-semibold">{frontMatter.title}</span>
+            <span aria-hidden="true"> &gt; </span>
+            <span className="text-gray-800 font-semibold">{frontMatter.title}</span>
           </>
         )}
       </nav>
 
-      {/* === MAIN CONTENT === */}
       <article data-sb-object-id={`posts/${slug}.mdx`}>
         <section
           className="prose dark:prose-invert prose-headings:text-left max-w-4xl mx-auto px-4"
@@ -84,11 +87,13 @@ export default function PostPage({
 
           {frontMatter.date && (
             <p className="mb-4 text-sm text-gray-500 dark:text-gray-400" data-sb-field-path="date">
-              {new Date(frontMatter.date).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric"
-              })}
+              <time dateTime={frontMatter.date}>
+                {new Date(frontMatter.date).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric"
+                })}
+              </time>
             </p>
           )}
 
@@ -98,15 +103,15 @@ export default function PostPage({
             </p>
           )}
 
-          {/* === AUTHOR === */}
-          <p className="text-sm text-gray-700 px-4">
-            • Author: <span>{frontMatter.author || 'Echo Reader'}</span>
-          </p>
+          {frontMatter.author && (
+            <p className="text-sm text-gray-700 dark:text-gray-300 px-4 mb-6">
+              <strong>Author:</strong> <span>{frontMatter.author}</span>
+            </p>
+          )}
 
           <MDXRemote {...source} components={components} scope={{ siteUrl }} />
         </section>
 
-        {/* === TAGS === */}
         {frontMatter.tags && frontMatter.tags.length > 0 && (
           <div className="mt-8 text-sm text-gray-600 px-4">
             <strong className="block mb-2">Tags:</strong>
@@ -123,8 +128,7 @@ export default function PostPage({
           </div>
         )}
 
-        {/* === PREV / NEXT === */}
-        <div className="flex justify-between mt-12 px-4 text-sm text-blue-600">
+        <nav className="flex justify-between mt-12 px-4 text-sm text-blue-600" aria-label="Post navigation">
           {prevPost ? (
             <div className="flex items-center gap-1">
               <span aria-hidden="true">&laquo;</span>
@@ -152,21 +156,34 @@ export default function PostPage({
           ) : (
             <span />
           )}
-        </div>
+        </nav>
       </article>
     </>
   );
 }
 
+function extractFaqs(content) {
+  const regex = /<details>\s*<summary>(.*?)<\/summary>\s*<p>(.*?)<\/p>\s*<\/details>/gs;
+  const faqs = [];
+  let match;
+  
+  while ((match = regex.exec(content)) !== null) {
+    faqs.push({ 
+      question: match[1].trim(), 
+      answer: match[2].trim() 
+    });
+  }
+  
+  return faqs;
+}
+
 export const getStaticProps = async ({ params }) => {
   const globalData = getGlobalData();
-  const { mdxSource, data } = await getPostBySlug(params.slug);
+  const { mdxSource, data, content } = await getPostBySlug(params.slug);
   const allPosts = getAllPosts();
-
+  const faqs = extractFaqs(content);
   const slugs = allPosts.map(post => post.filePath.replace(/\.mdx?$/, ''));
   const index = slugs.indexOf(params.slug);
-
-  // Guard kalau slug tidak ketemu (misal mismatch nama file)
   const prevPost = index > 0 ? allPosts[index - 1] : null;
   const nextPost = (index !== -1 && index < slugs.length - 1) ? allPosts[index + 1] : null;
 
@@ -174,7 +191,10 @@ export const getStaticProps = async ({ params }) => {
     props: {
       globalData,
       source: mdxSource,
-      frontMatter: data,
+      frontMatter: { 
+        ...data, 
+        faqs
+      },
       slug: params.slug,
       prevPost,
       nextPost,

@@ -9,9 +9,15 @@ export default function Schema({ type, data = {} }) {
       "url": "https://craftflavor.blog",
       "logo": "https://craftflavor.blog/logo.png",
       "sameAs": [
-        "https://blogspot.com/echo-reader",
-        "https://twitter.com/echoreader"
-      ]
+        "https://www.linkedin.com/in/echo-reader/",
+        "https://www.facebook.com/profile.php?id=61569116903478",
+        "https://x.com/echo_reader"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "email": "tom.bisnis@gmail.com"
+      }
     },
     article: {
       "@context": "https://schema.org",
@@ -69,9 +75,24 @@ export default function Schema({ type, data = {} }) {
       "name": "Echo",
       "url": "https://craftflavor.blog/about",
       "sameAs": [
-        "https://blogspot.com/echo-reader",
-        "https://twitter.com/echoreader"
+        "https://www.linkedin.com/in/echo-reader/",
+        "https://www.facebook.com/profile.php?id=61569116903478",
+        "https://x.com/echo_reader"
       ]
+    },
+    faq: {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": Array.isArray(data.faqs)
+        ? data.faqs.map(faq => ({
+            "@type": "Question",
+            "name": faq.question,
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": faq.answer
+            }
+          }))
+        : []
     }
   };
 

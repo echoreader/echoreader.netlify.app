@@ -1,6 +1,10 @@
+import Schema from '../components/Schema'; // ← tambahkan import
+
 export default function About() {
   return (
     <>
+      {/* === SCHEMA === */}
+      <Schema type="organization"/>
       <h1 className="text-3xl font-bold text-center mb-8 lg:text-5xl">
         About CraftFlavor
       </h1>

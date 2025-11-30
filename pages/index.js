@@ -1,6 +1,11 @@
+import Schema from '../components/Schema'; // ← tambahkan import
+
 export default function Index() {
   return (
     <>
+      {/* === SCHEMA === */}
+      <Schema type="organization"/>
+
       <h1 className="text-3xl font-bold text-center mb-8 lg:text-5xl leading-tight min-h-[80px]">  
         Craft with Flavor — Handmade Joy Meets Kitchen Creativity
       </h1>
